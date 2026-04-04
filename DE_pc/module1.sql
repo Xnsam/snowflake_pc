@@ -847,4 +847,57 @@ select
     m.menu_item_health_metrics_obj
 from tasty_bytes.raw_pos.menu as m limit 10;
 
+-- >  Semi structured data
+describe table tasty_bytes.raw_pos.menu;
 
+-- create table tasty_bytes.raw_pos.menu 
+-- (
+--     menu_id NUMBER(19, 0),
+--     menu_type_id NUMBER(38, 0),
+--     menu_type VARCHAR(16777216),
+--     truck_brand_name VARCHAR(16777216),
+--     menu_item_id NUMBER(38, 0),
+--     menu_item_name VARCHAR(16777216),
+--     item_category VARCHAR(16777216),
+--     item_subcategory VARCHAR(16777216),
+--     cost_of_goods_usd NUMBER(38, 4),
+--     sale_price_usd NUMBER(38, 4),
+--     menu_item_health_metrics_obj VARIANT
+-- );
+
+
+create table tasty_bytes.raw_pos.test_menu (cost_of_goods_variant)
+as select cost_of_goods_usd::variant
+from tasty_bytes.raw_pos.menu;
+
+describe table tasty_bytes.raw_pos.test_menu;
+
+select typeof(cost_of_goods_variant) 
+from tasty_bytes.raw_pos.test_menu;
+
+select cost_of_goods_variant,
+cost_of_goods_variant * 2.0
+from tasty_bytes.raw_pos.test_menu;
+
+drop table tasty_bytes.raw_pos.test_menu;
+
+select menu_item_health_metrics_obj
+from tasty_bytes.raw_pos.menu;
+
+
+select menu_item_health_metrics_obj,
+menu_item_health_metrics_obj['menu_item_id'] as menu_item_id,
+menu_item_health_metrics_obj['menu_item_health_metrics'][0]['ingredients'] as ingredients
+from tasty_bytes.raw_pos.menu;
+
+describe table tasty_bytes.raw_pos.menu;
+
+
+
+select distinct(typeof(menu_item_health_metrics_obj))
+from tasty_bytes.raw_pos.menu;
+
+select
+menu_item_health_metrics_obj['menu_item_health_metrics'][0]['ingredients'][0]
+from tasty_bytes.raw_pos.menu
+where menu_item_name = 'Mango Sticky Rice';
